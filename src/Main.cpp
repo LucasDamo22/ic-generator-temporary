@@ -20,32 +20,37 @@ int main(int argc, char **argv)
 
     std::vector<int> v1;
 
-    for (int i = 0; i < n_parcelas; i++)
+    do
     {
+        int coef_aux = coef;
+        int flag;
         int aux;
-
-        aux = rand() % (coef/2)+1;
-
-        if (sum < coef)
+        for (int i = 0; i < n_parcelas; i++)
         {
-            sum = sum + aux;
+
+            aux = rand() % coef_aux+3;
             v1.push_back(aux);
             
         }
-    }
+        sum = 0;
+        for (int i = 0; i < n_parcelas; i++)
+        {
+            sum += v1[i];
+        }
+
+        if (sum != coef)
+        {
+            v1.clear();
+        }
+
+    } while (sum != coef);
+
     for (int i = 0; i < n_parcelas; i++)
     {
-
         std::cout << v1[i] << std::endl;
     }
-    for (int i = 0; i < n_parcelas; i++)
-    {
 
-        double aux;
-        aux += v1[i];
-        std::cout << "\n\n\n\n"
-                  << aux / n_parcelas;
-    }
+    std::cout << sum << std::endl;
 
     return 0;
 }
