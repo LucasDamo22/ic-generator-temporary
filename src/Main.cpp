@@ -1,58 +1,79 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <sstream>
+#include <fstream>
 
 #define MIN_PARCELAS 9
 #define MAX_PARCELAS 20
 
-#define UTILIZACAO_ALVO 80
+//#define UTILIZACAO_ALVO 60
 
-int random(int min, int max) {
-	return (rand() % (min - max)) + min;
+int random(int min, int max)
+{
+    return (rand() % (min - max)) + min;
 }
 
-int main(int argc, char** argv){
+int main(int argc, char **argv)
+{
 
-	// initializa o gerador de números pseudo-aleatórios com uma semente 
-	// diferente a cada inicialização
-	srand(time(NULL));
+    // initializa o gerador de números pseudo-aleatórios com uma semente
+    // diferente a cada inicialização
+    srand(time(NULL));
 
-	// gera um número de parcelas entre MIN_PARCELAS e MAX_PARCELAS
-	int num_parcelas = random(MIN_PARCELAS, MAX_PARCELAS);
+    int UTILIZACAO_ALVO;
+    UTILIZACAO_ALVO = atoi(argv[1]);
 
-	// o montante de CPU disponível é dado por UTILIZACAO_ALVO. Enquanto não 
-	// atingirmos essa utilização, geramos novas parcelas
-	int utilizacao_atual = 0;
+    // gera um número de parcelas entre MIN_PARCELAS e MAX_PARCELAS
+    int num_parcelas = random(MIN_PARCELAS, MAX_PARCELAS);
 
-	int min_valor_parcela, max_valor_parcela;
-	int parcelas[num_parcelas];
+    // o montante de CPU disponível é dado por UTILIZACAO_ALVO. Enquanto não
+    // atingirmos essa utilização, geramos novas parcelas
+    int utilizacao_atual = 0;
 
-	for(int i = 0; i < num_parcelas; i++){
+    int min_valor_parcela, max_valor_parcela;
+    int parcelas[num_parcelas];
+    int parcelasSuperiores[num_parcelas];
 
-		std::cout << "[" << utilizacao_atual << "%] ";
+    for (int i = 0; i < num_parcelas; i++)
+    {
 
-		// parcela terá no mínimo 5% da utilizacao faltante (valor mínimo = 1)
-		min_valor_parcela = ((UTILIZACAO_ALVO - utilizacao_atual) / 20) + 1; 
+        // parcela terá no mínimo 5% da utilizacao faltante (valor mínimo = 1)
+        min_valor_parcela = ((UTILIZACAO_ALVO - utilizacao_atual) / 20) + 1;
 
-		// parcela terá no mínimo 20% da utilização faltante (valor mínimo = 1)
-		max_valor_parcela = ((UTILIZACAO_ALVO - utilizacao_atual) / 5) + 1;
+        // parcela terá no mínimo 20% da utilização faltante (valor mínimo = 1)
+        max_valor_parcela = ((UTILIZACAO_ALVO - utilizacao_atual) / 5) + 1;
 
-		std::cout << " gerando na faixa (" << min_valor_parcela << ", " << max_valor_parcela << ")... ";
-	
-		int parcela = random(min_valor_parcela, max_valor_parcela);
-		utilizacao_atual += parcela;
+        int parcela = random(min_valor_parcela, max_valor_parcela);
+        utilizacao_atual += parcela;
 
-		std::cout << parcela << "^-1" << std::endl;
-		parcelas[i] = parcela;
-	}
+        parcelas[i] = parcela;
+    }
 
-	std::cout << "[" << utilizacao_atual << "] completando utilização adicionando " << (UTILIZACAO_ALVO - utilizacao_atual) << " à última parcela" << std::endl;
+    parcelas[num_parcelas - 1] = parcelas[num_parcelas - 1] + (UTILIZACAO_ALVO - utilizacao_atual); // adicionando o que falta na ultima parcela
 
-	std::cout << "conjunto final de parcelas: [ ";
+    //**********Transformando as parcelas em frações que somem o coeficiente e colocando em um array de numeradores chamado de "parcelasSuperiores"
+    for (int i = 0; i < num_parcelas; i++)
+    {
+        int aux = parcelas[i];
+        parcelas[i] = parcelas[i] * 100;
+        parcelasSuperiores[i] = (aux * UTILIZACAO_ALVO);
+    }
+    
+    //**********Mandando as parcelas para o arquivo yaml
+    std::ofstream arqOutYaml;
+    arqOutYaml.open("./data/processes.yaml", std::ios::out);
+    if (!arqOutYaml.is_open())
+    {
 
-	for(int i = 0; i < num_parcelas -1 ; i++)
-		std::cout << parcelas[i] << ", ";
+        std::cout << "erro na geração do arquivo";
+        return 1;
+    }
+    arqOutYaml << "Processos:"<<std::endl;
+    for(int i = 0; i < num_parcelas;i++){
+    arqOutYaml << "  processo"<<i+1<<":"<<" ["<<parcelasSuperiores[i]<<", "<<parcelas[i]<<"]"<<std::endl;
+    }
+    arqOutYaml.close();
 
-	std::cout << (parcelas[num_parcelas-1] + (UTILIZACAO_ALVO - utilizacao_atual)) << "]" << std::endl;
-
+    return 0;    
 }
