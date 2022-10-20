@@ -1,56 +1,58 @@
 #include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <string>
-#include <sstream>
 #include <cstdlib>
 #include <ctime>
-#include <vector>
 
-int main(int argc, char **argv)
-{
-    unsigned seed = time(0);
-    srand(seed);
-    int n_parcelas;
-    int coef;
-    int sum = 0;
+#define MIN_PARCELAS 9
+#define MAX_PARCELAS 20
 
-    coef = atoi(argv[1]);
-    n_parcelas = atoi(argv[2]);
+#define UTILIZACAO_ALVO 80
 
-    std::vector<int> v1;
+int random(int min, int max) {
+	return (rand() % (min - max)) + min;
+}
 
-    do
-    {
-        int coef_aux = coef;
-        int flag;
-        int aux;
-        for (int i = 0; i < n_parcelas; i++)
-        {
+int main(int argc, char** argv){
 
-            aux = rand() % coef_aux+3;
-            v1.push_back(aux);
-            
-        }
-        sum = 0;
-        for (int i = 0; i < n_parcelas; i++)
-        {
-            sum += v1[i];
-        }
+	// initializa o gerador de números pseudo-aleatórios com uma semente 
+	// diferente a cada inicialização
+	srand(time(NULL));
 
-        if (sum != coef)
-        {
-            v1.clear();
-        }
+	// gera um número de parcelas entre MIN_PARCELAS e MAX_PARCELAS
+	int num_parcelas = random(MIN_PARCELAS, MAX_PARCELAS);
 
-    } while (sum != coef);
+	// o montante de CPU disponível é dado por UTILIZACAO_ALVO. Enquanto não 
+	// atingirmos essa utilização, geramos novas parcelas
+	int utilizacao_atual = 0;
 
-    for (int i = 0; i < n_parcelas; i++)
-    {
-        std::cout << v1[i] << std::endl;
-    }
+	int min_valor_parcela, max_valor_parcela;
+	int parcelas[num_parcelas];
 
-    std::cout << sum << std::endl;
+	for(int i = 0; i < num_parcelas; i++){
 
-    return 0;
+		std::cout << "[" << utilizacao_atual << "%] ";
+
+		// parcela terá no mínimo 5% da utilizacao faltante (valor mínimo = 1)
+		min_valor_parcela = ((UTILIZACAO_ALVO - utilizacao_atual) / 20) + 1; 
+
+		// parcela terá no mínimo 20% da utilização faltante (valor mínimo = 1)
+		max_valor_parcela = ((UTILIZACAO_ALVO - utilizacao_atual) / 5) + 1;
+
+		std::cout << " gerando na faixa (" << min_valor_parcela << ", " << max_valor_parcela << ")... ";
+	
+		int parcela = random(min_valor_parcela, max_valor_parcela);
+		utilizacao_atual += parcela;
+
+		std::cout << parcela << "^-1" << std::endl;
+		parcelas[i] = parcela;
+	}
+
+	std::cout << "[" << utilizacao_atual << "] completando utilização adicionando " << (UTILIZACAO_ALVO - utilizacao_atual) << " à última parcela" << std::endl;
+
+	std::cout << "conjunto final de parcelas: [ ";
+
+	for(int i = 0; i < num_parcelas -1 ; i++)
+		std::cout << parcelas[i] << ", ";
+
+	std::cout << (parcelas[num_parcelas-1] + (UTILIZACAO_ALVO - utilizacao_atual)) << "]" << std::endl;
+
 }
