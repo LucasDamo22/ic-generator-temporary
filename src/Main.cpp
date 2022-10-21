@@ -4,13 +4,11 @@
 #include <sstream>
 #include <fstream>
 
-#define MIN_PARCELAS 4
-#define MAX_PARCELAS 10
-
-//#define UTILIZACAO_ALVO 60
-
-int random(int min, int max)
+float random(int min, int max)
 {
+    if(min == 1 && max ==1)
+    max +=1;
+     
     return (rand() % (min - max)) + min;
 }
 
@@ -24,16 +22,21 @@ int main(int argc, char **argv)
     int UTILIZACAO_ALVO;
     UTILIZACAO_ALVO = atoi(argv[1]);
 
-    // gera um número de parcelas entre MIN_PARCELAS e MAX_PARCELAS
-    int num_parcelas = random(MIN_PARCELAS, MAX_PARCELAS);
+    int min_parcelas = (UTILIZACAO_ALVO / 10) + 1;
+    int max_parcelas = (UTILIZACAO_ALVO / 5) + 1;
+
+    std::cout << "min:" << min_parcelas << " max:" << max_parcelas << std::endl;
+
+    // gera um número de parcelas entre min_parcelas e max_parcelas
+    int num_parcelas = random(min_parcelas, max_parcelas);
 
     // o montante de CPU disponível é dado por UTILIZACAO_ALVO. Enquanto não
     // atingirmos essa utilização, geramos novas parcelas
     int utilizacao_atual = 0;
 
     int min_valor_parcela, max_valor_parcela;
-    double parcelas[num_parcelas];
-    double parcelasSuperiores[num_parcelas];
+    float parcelas[num_parcelas];
+    float parcelasSuperiores[num_parcelas];
 
     for (int i = 0; i < num_parcelas; i++)
     {
@@ -55,7 +58,7 @@ int main(int argc, char **argv)
     //**********Transformando as parcelas em frações que somem o coeficiente e colocando em um array de numeradores chamado de "parcelasSuperiores"
     for (int i = 0; i < num_parcelas; i++)
     {
-        double aux = parcelas[i];
+        float aux = parcelas[i];
         parcelas[i] = parcelas[i] * 100;
         parcelasSuperiores[i] = (aux * UTILIZACAO_ALVO)/num_parcelas;
     }

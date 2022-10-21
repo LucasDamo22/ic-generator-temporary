@@ -1,10 +1,2 @@
 Processos:
-  processo1: [17.7778, 400]
-  processo2: [17.7778, 400]
-  processo3: [13.3333, 300]
-  processo4: [13.3333, 300]
-  processo5: [13.3333, 300]
-  processo6: [17.7778, 400]
-  processo7: [4.44444, 100]
-  processo8: [8.88889, 200]
-  processo9: [71.1111, 1600]
+  processo1: [16, 400]

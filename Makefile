@@ -6,7 +6,7 @@ PROGRAM_NAME = main
 CXXFLAGS  +=-Iinclude
 
 #link with other libraries
-LD_FLAGS :=-lm
+LD_FLAGS :=-lm -ggdb
 
 #source files for the platform
 SOURCE_FILES := $(wildcard $(SOURCEDIR)/*.cpp)
