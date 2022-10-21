@@ -4,8 +4,8 @@
 #include <sstream>
 #include <fstream>
 
-#define MIN_PARCELAS 9
-#define MAX_PARCELAS 20
+#define MIN_PARCELAS 4
+#define MAX_PARCELAS 10
 
 //#define UTILIZACAO_ALVO 60
 
@@ -32,8 +32,8 @@ int main(int argc, char **argv)
     int utilizacao_atual = 0;
 
     int min_valor_parcela, max_valor_parcela;
-    int parcelas[num_parcelas];
-    int parcelasSuperiores[num_parcelas];
+    double parcelas[num_parcelas];
+    double parcelasSuperiores[num_parcelas];
 
     for (int i = 0; i < num_parcelas; i++)
     {
@@ -55,9 +55,9 @@ int main(int argc, char **argv)
     //**********Transformando as parcelas em frações que somem o coeficiente e colocando em um array de numeradores chamado de "parcelasSuperiores"
     for (int i = 0; i < num_parcelas; i++)
     {
-        int aux = parcelas[i];
+        double aux = parcelas[i];
         parcelas[i] = parcelas[i] * 100;
-        parcelasSuperiores[i] = (aux * UTILIZACAO_ALVO);
+        parcelasSuperiores[i] = (aux * UTILIZACAO_ALVO)/num_parcelas;
     }
     
     //**********Mandando as parcelas para o arquivo yaml
