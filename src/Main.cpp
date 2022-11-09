@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     int min_parcelas = (UTILIZACAO_ALVO / 10) + 1;
     int max_parcelas = (UTILIZACAO_ALVO / 5) + 1;
 
-    std::cout << "min:" << min_parcelas << " max:" << max_parcelas << std::endl;
+    //std::cout << "min:" << min_parcelas << " max:" << max_parcelas << std::endl;
 
     // gera um número de parcelas entre min_parcelas e max_parcelas
     int num_parcelas = random(min_parcelas, max_parcelas);
